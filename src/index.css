@@ -153,4 +153,6 @@
   .border-dp-gold\/35   { border-color: rgb(var(--dp-gold) / 0.35); }
   .border-dp-gold\/18   { border-color: rgb(var(--dp-gold) / 0.18); }
   .border-dp-gold\/15   { border-color: rgb(var(--dp-gold) / 0.15); }
+
+  .hover\:border-dp-gold\/30:hover { border-color: rgb(var(--dp-gold) / 0.30); }
 }

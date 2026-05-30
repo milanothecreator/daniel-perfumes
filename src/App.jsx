@@ -38,41 +38,72 @@ function RequireAuth({ children }) {
 
 function BottomNav() {
   const { user } = useAuth()
+  const tabCls = (isActive) =>
+    `relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors ${isActive ? 'text-dp-gold' : 'text-dp-muted'}`
+  const dot = <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-dp-gold opacity-90" />
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-dp-bg/96 backdrop-blur-md border-t border-dp-border">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl"
+      style={{
+        background: 'rgb(var(--dp-bg) / 0.65)',
+        borderTop: '1px solid rgb(var(--dp-gold) / 0.22)',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.28)',
+      }}
+    >
       <div className="flex items-center justify-around px-2 py-2">
-        <NavLink to="/" end className={({ isActive }) => `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors ${isActive ? 'text-dp-gold' : 'text-dp-muted'}`}>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          <span className="font-body text-[10px] tracking-wide">Home</span>
-        </NavLink>
-
-        <NavLink to="/shop" className={({ isActive }) => `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors ${isActive ? 'text-dp-gold' : 'text-dp-muted'}`}>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          <span className="font-body text-[10px] tracking-wide">Shop</span>
-        </NavLink>
-
-        <NavLink to="/quiz" className={({ isActive }) => `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors ${isActive ? 'text-dp-gold' : 'text-dp-muted'}`}>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-          <span className="font-body text-[10px] tracking-wide">Quiz</span>
-        </NavLink>
-
-        <NavLink to={user ? '/profile' : '/auth'} className={({ isActive }) => `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors ${isActive ? 'text-dp-gold' : 'text-dp-muted'}`}>
-          {user ? (
-            <div className="w-5 h-5 rounded-full bg-dp-gold/30 border border-dp-gold/60 flex items-center justify-center">
-              <span className="font-body text-[8px] text-dp-gold font-bold">{user.initials.slice(0, 1)}</span>
+        <NavLink to="/" end>
+          {({ isActive }) => (
+            <div className={tabCls(isActive)}>
+              {isActive && dot}
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              <span className="font-body text-[10px] tracking-wide">Home</span>
             </div>
-          ) : (
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
           )}
-          <span className="font-body text-[10px] tracking-wide">{user ? 'Profile' : 'Account'}</span>
+        </NavLink>
+
+        <NavLink to="/shop">
+          {({ isActive }) => (
+            <div className={tabCls(isActive)}>
+              {isActive && dot}
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              <span className="font-body text-[10px] tracking-wide">Shop</span>
+            </div>
+          )}
+        </NavLink>
+
+        <NavLink to="/quiz">
+          {({ isActive }) => (
+            <div className={tabCls(isActive)}>
+              {isActive && dot}
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <span className="font-body text-[10px] tracking-wide">Quiz</span>
+            </div>
+          )}
+        </NavLink>
+
+        <NavLink to={user ? '/profile' : '/auth'}>
+          {({ isActive }) => (
+            <div className={tabCls(isActive)}>
+              {isActive && dot}
+              {user ? (
+                <div className="w-5 h-5 rounded-full bg-dp-gold/30 border border-dp-gold/60 flex items-center justify-center">
+                  <span className="font-body text-[8px] text-dp-gold font-bold">{user.initials.slice(0, 1)}</span>
+                </div>
+              ) : (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              )}
+              <span className="font-body text-[10px] tracking-wide">{user ? 'Profile' : 'Account'}</span>
+            </div>
+          )}
         </NavLink>
       </div>
     </nav>

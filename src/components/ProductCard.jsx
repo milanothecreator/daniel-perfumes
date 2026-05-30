@@ -20,18 +20,20 @@ export default function ProductCard({ product, compact = false }) {
   if (compact) {
     // ── App-style compact card (used in Shop grid) ──────────────────────────
     return (
-      <div className="bg-dp-card rounded-2xl overflow-hidden shadow-sm border border-dp-border flex flex-col">
+      <div className="group bg-dp-card rounded-2xl overflow-hidden border border-dp-gold/15 hover:border-dp-gold/30 flex flex-col transition-all duration-300 hover:-translate-y-0.5 shadow-[0_2px_16px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_28px_rgba(0,0,0,0.5)]">
+        {/* gold shimmer top line */}
+        <div className="h-px shrink-0" style={{ background: 'linear-gradient(to right, transparent, rgb(var(--dp-gold) / 0.45), transparent)' }} />
         {/* image area */}
         <Link to={`/product/${product.id}`} className="block relative">
           <div
-            className="relative h-40 flex items-center justify-center"
+            className="relative h-44 flex items-center justify-center"
             style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
           >
             {product.image ? (
               <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
             ) : (
               <span
-                className="font-display font-bold text-5xl select-none"
+                className="font-display font-bold text-6xl select-none"
                 style={{ color: `${product.placeholderColor}70` }}
               >
                 {product.placeholderInitial}
@@ -86,18 +88,20 @@ export default function ProductCard({ product, compact = false }) {
 
   // ── Full card (used in Quiz results, Product related, Home featured) ────────
   return (
-    <div className="bg-dp-card rounded-2xl overflow-hidden shadow-sm border border-dp-border flex flex-col">
+    <div className="group bg-dp-card rounded-2xl overflow-hidden border border-dp-gold/15 hover:border-dp-gold/30 flex flex-col transition-all duration-300 hover:-translate-y-0.5 shadow-[0_2px_16px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_28px_rgba(0,0,0,0.5)]">
+      {/* gold shimmer top line */}
+      <div className="h-px shrink-0" style={{ background: 'linear-gradient(to right, transparent, rgb(var(--dp-gold) / 0.45), transparent)' }} />
       {/* image */}
       <Link to={`/product/${product.id}`} className="block relative">
         <div
-          className="relative h-52 flex items-center justify-center"
+          className="relative h-56 flex items-center justify-center"
           style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
         >
           {product.image ? (
             <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
             <span
-              className="font-display font-bold text-6xl select-none"
+              className="font-display font-bold text-7xl select-none"
               style={{ color: `${product.placeholderColor}70` }}
             >
               {product.placeholderInitial}
