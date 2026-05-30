@@ -38,16 +38,13 @@ export default function About() {
           className="grid md:grid-cols-2 gap-12 mb-20 items-center"
         >
           {/* Large decorative element */}
-          <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden card-dark flex items-center justify-center">
-            <div
-              className="absolute inset-0"
-              style={{ background: 'linear-gradient(145deg, #D4C0A8 0%, #F7F4EF 100%)' }}
+          <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden">
+            <img
+              src="/daniel-owner.jpg"
+              alt="Daniel — founder of Daniel Perfumes, Kampala"
+              className="w-full h-full object-cover object-center"
             />
-            <div
-              className="absolute inset-0 opacity-60"
-              style={{ background: 'radial-gradient(circle at 40% 50%, #9A752018, transparent 70%)' }}
-            />
-            <span className="relative font-display text-8xl text-dp-gold/30 select-none tracking-tighter">D P</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-dp-bg/50 via-transparent to-transparent" />
           </div>
 
           <div>
