@@ -1,0 +1,7 @@
+node_modules
+dist
+.playwright-mcp
+temporary screenshots
+*.output
+screenshot.mjs
+CLAUDE.md
