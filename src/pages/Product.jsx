@@ -64,7 +64,7 @@ export default function Product() {
             key={imgIdx}
             src={images[imgIdx]}
             alt={product.name}
-            className="absolute inset-0 w-full h-full object-contain"
+            className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -252,9 +252,11 @@ function RelatedCard({ product }) {
         className="h-28 flex items-center justify-center relative overflow-hidden"
         style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
       >
-        {product.image
-          ? <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-          : <span className="font-display font-bold text-3xl select-none" style={{ color: `${product.placeholderColor}55` }}>{product.placeholderInitial}</span>}
+        <span className="font-display font-bold text-3xl select-none" style={{ color: `${product.placeholderColor}55` }}>{product.placeholderInitial}</span>
+        {(product.images?.[0] || product.image) && (
+          <img src={product.images?.[0] || product.image} alt="" className="absolute inset-0 w-full h-full object-cover"
+            onError={e => { e.currentTarget.style.display = 'none' }} />
+        )}
       </div>
       <div className="p-2.5">
         <p className="font-display text-dp-cream text-xs leading-snug truncate">{product.name}</p>

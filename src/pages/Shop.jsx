@@ -46,12 +46,12 @@ function ArrivalCard({ product }) {
         className="relative h-36 flex items-center justify-center"
         style={{ background: `linear-gradient(145deg, ${product.placeholderColor}55, ${product.placeholderColor}22)` }}
       >
-        {product.image ? (
-          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <span className="font-display font-bold text-5xl select-none" style={{ color: `${product.placeholderColor}60` }}>
-            {product.placeholderInitial}
-          </span>
+        <span className="font-display font-bold text-5xl select-none" style={{ color: `${product.placeholderColor}60` }}>
+          {product.placeholderInitial}
+        </span>
+        {(product.images?.[0] || product.image) && (
+          <img src={product.images?.[0] || product.image} alt="" className="absolute inset-0 w-full h-full object-cover"
+            onError={e => { e.currentTarget.style.display = 'none' }} />
         )}
         <span className="absolute top-2.5 left-2.5 bg-dp-cream text-white font-body text-[9px] tracking-widest uppercase px-2 py-0.5 rounded-full">
           {cat?.name}

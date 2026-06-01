@@ -31,15 +31,15 @@ export default function ProductCard({ product, compact = false }) {
             className="relative h-44 flex items-center justify-center"
             style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
           >
-            {product.image ? (
-              <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-            ) : (
-              <span
-                className="font-display font-bold text-6xl select-none"
-                style={{ color: `${product.placeholderColor}70` }}
-              >
-                {product.placeholderInitial}
-              </span>
+            <span
+              className="font-display font-bold text-6xl select-none"
+              style={{ color: `${product.placeholderColor}70` }}
+            >
+              {product.placeholderInitial}
+            </span>
+            {(product.images?.[0] || product.image) && (
+              <img src={product.images?.[0] || product.image} alt="" className="absolute inset-0 w-full h-full object-cover"
+                onError={e => { e.currentTarget.style.display = 'none' }} />
             )}
 
             {/* category badge */}
@@ -99,15 +99,15 @@ export default function ProductCard({ product, compact = false }) {
           className="relative h-56 flex items-center justify-center"
           style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
         >
-          {product.image ? (
-            <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-          ) : (
-            <span
-              className="font-display font-bold text-7xl select-none"
-              style={{ color: `${product.placeholderColor}70` }}
-            >
-              {product.placeholderInitial}
-            </span>
+          <span
+            className="font-display font-bold text-7xl select-none"
+            style={{ color: `${product.placeholderColor}70` }}
+          >
+            {product.placeholderInitial}
+          </span>
+          {(product.images?.[0] || product.image) && (
+            <img src={product.images?.[0] || product.image} alt="" className="absolute inset-0 w-full h-full object-cover"
+              onError={e => { e.currentTarget.style.display = 'none' }} />
           )}
 
           <span

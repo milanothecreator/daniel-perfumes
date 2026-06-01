@@ -35,8 +35,20 @@ export default function AdminProducts() {
 
   useEffect(() => {
     if (!firebaseReady || !db) return
+    const staticMap = Object.fromEntries(seedProducts.map(p => [p.id, p]))
+    const isGoodImage = url => url && (url.includes('cloudinary') || /photo-\d{10}/.test(url))
+
     return onSnapshot(collection(db, 'products'), snap => {
-      const firestoreProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      const firestoreProducts = snap.docs.map(d => {
+        const data = { id: d.id, ...d.data() }
+        if (!isGoodImage(data.image) && staticMap[data.id]?.image) {
+          data.image = staticMap[data.id].image
+        }
+        if (!data.images?.length) {
+          data.images = data.image ? [data.image] : []
+        }
+        return data
+      })
       setProducts(firestoreProducts)
 
       // Auto-sync: push static catalog to Firestore if count is behind or any
@@ -173,10 +185,10 @@ export default function AdminProducts() {
           return (
             <div key={p.id} className="rounded-2xl overflow-hidden flex flex-col" style={{ background: C.card, border: `1px solid ${C.border}` }}>
               <div className="h-28 relative overflow-hidden" style={{ background: `${p.placeholderColor}22` }}>
-                {(p.images?.[0] || p.image) ? (
-                  <img src={p.images?.[0] || p.image} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
-                ) : (
-                  <span className="absolute inset-0 flex items-center justify-center text-3xl font-bold" style={{ color: p.placeholderColor }}>{p.placeholderInitial}</span>
+                <span className="absolute inset-0 flex items-center justify-center text-3xl font-bold select-none" style={{ color: p.placeholderColor }}>{p.placeholderInitial}</span>
+                {(p.images?.[0] || p.image) && (
+                  <img src={p.images?.[0] || p.image} alt="" className="absolute inset-0 w-full h-full object-cover"
+                    onError={e => { e.currentTarget.style.display = 'none' }} />
                 )}
                 {p.images?.length > 1 && (
                   <span className="absolute bottom-1.5 right-1.5 font-body text-[9px] px-1.5 py-0.5 rounded-full bg-black/50 text-white">
