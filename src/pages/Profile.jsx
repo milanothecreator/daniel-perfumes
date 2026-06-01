@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { useCart } from '../context/CartContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ChevronRight, ShoppingBag, Sparkles, Star, Heart, LogOut,
   Mail, MapPin, Moon, Sun, User, Shield, RefreshCw,
-  MessageSquare, Bell, Sliders, ChevronDown, Check, X, Edit3,
+  MessageSquare, Bell, Sliders, ChevronDown, Check, X, Edit3, ShoppingCart,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -20,10 +21,20 @@ const providerLabel = { google: 'Google', apple: 'Apple', facebook: 'Facebook', 
 
 function SavedCard({ product }) {
   const cat = categories.find(c => c.slug === product.category)
+  const { addItem } = useCart()
+  const [added, setAdded] = useState(false)
+
+  function handleAdd(e) {
+    e.preventDefault()
+    addItem(product)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 900)
+  }
+
   return (
     <Link
       to={`/product/${product.id}`}
-      className="bg-dp-card border border-dp-border rounded-2xl overflow-hidden block active:scale-95 transition-transform"
+      className="bg-dp-card border border-dp-border rounded-2xl overflow-hidden block transition-transform active:scale-[0.98]"
     >
       <div
         className="relative h-28 flex items-center justify-center"
@@ -39,9 +50,18 @@ function SavedCard({ product }) {
           {cat?.name}
         </span>
       </div>
-      <div className="p-2.5">
-        <p className="font-display text-dp-cream text-xs leading-snug truncate">{product.name}</p>
-        <p className="font-body text-[10px] text-dp-gold mt-1">{(product.price / 1000).toFixed(0)}k UGX</p>
+      <div className="p-2.5 flex items-end justify-between gap-2">
+        <div className="min-w-0">
+          <p className="font-display text-dp-cream text-xs leading-snug truncate">{product.name}</p>
+          <p className="font-body text-[10px] text-dp-gold mt-0.5">{(product.price / 1000).toFixed(0)}k UGX</p>
+        </div>
+        <button
+          type="button"
+          onClick={handleAdd}
+          className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm transition-all active:scale-90 ${added ? 'bg-green-500' : 'bg-dp-gold hover:bg-dp-gold-light'}`}
+        >
+          {added ? <Check size={12} /> : <ShoppingCart size={12} />}
+        </button>
       </div>
     </Link>
   )
