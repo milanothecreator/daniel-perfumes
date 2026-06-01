@@ -46,7 +46,7 @@ export default function Product() {
         style={{ background: `linear-gradient(145deg, ${product.placeholderColor}55, ${product.placeholderColor}18)` }}
       >
         {product.image ? (
-          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-contain" />
+          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="font-display font-bold text-[120px] leading-none select-none pointer-events-none"
@@ -56,7 +56,7 @@ export default function Product() {
           </div>
         )}
         {/* fade to bg at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dp-bg to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-dp-bg to-transparent" />
         {/* back button */}
         <button
           onClick={() => navigate(-1)}
