@@ -20,9 +20,12 @@ export default function Product() {
   const { isLiked, toggleLike }    = useLikes()
   const [activeTab, setActiveTab]  = useState(0)
   const [added, setAdded]          = useState(false)
+  const [imgIdx, setImgIdx]        = useState(0)
+  const [touchX, setTouchX]        = useState(null)
 
   if (!product) return <Navigate to="/shop" replace />
 
+  const images  = product.images?.length ? product.images : product.image ? [product.image] : []
   const cat     = categories.find(c => c.slug === product.category)
   const liked   = isLiked(product.id)
   const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 8)
@@ -37,22 +40,50 @@ export default function Product() {
     setTimeout(() => setAdded(false), 1200)
   }
 
+  function onTouchStart(e) { setTouchX(e.touches[0].clientX) }
+  function onTouchEnd(e) {
+    if (touchX === null) return
+    const dx = e.changedTouches[0].clientX - touchX
+    if (dx < -40 && imgIdx < images.length - 1) setImgIdx(i => i + 1)
+    if (dx >  40 && imgIdx > 0)                 setImgIdx(i => i - 1)
+    setTouchX(null)
+  }
+
   return (
     <main className="min-h-screen bg-dp-bg pt-16 pb-32">
 
-      {/* ── Full-width hero image ── */}
+      {/* ── Full-width hero image carousel ── */}
       <div
         className="relative h-64 sm:h-80 w-full overflow-hidden"
-        style={{ background: `linear-gradient(145deg, ${product.placeholderColor}55, ${product.placeholderColor}18)` }}
+        style={{ background: product.placeholderColor + '33' }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
-        {product.image ? (
-          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+        {images.length > 0 ? (
+          <img
+            key={imgIdx}
+            src={images[imgIdx]}
+            alt={product.name}
+            className="absolute inset-0 w-full h-full object-contain"
+          />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="font-display font-bold text-[120px] leading-none select-none pointer-events-none"
               style={{ color: `${product.placeholderColor}25` }}>
               {product.placeholderInitial}
             </span>
+          </div>
+        )}
+        {/* dot indicators */}
+        {images.length > 1 && (
+          <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 z-10">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setImgIdx(i)}
+                className={`h-1.5 rounded-full transition-all duration-200 ${i === imgIdx ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`}
+              />
+            ))}
           </div>
         )}
         {/* fade to bg at bottom */}

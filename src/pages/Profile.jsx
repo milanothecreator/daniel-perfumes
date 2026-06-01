@@ -40,8 +40,8 @@ function SavedCard({ product }) {
         className="relative h-28 flex items-center justify-center"
         style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
       >
-        {product.image
-          ? <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+        {(product.images?.[0] || product.image)
+          ? <img src={product.images?.[0] || product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
           : <span className="font-display font-bold text-4xl select-none" style={{ color: `${product.placeholderColor}60` }}>{product.placeholderInitial}</span>}
         <span
           className="absolute top-2 left-2 font-body text-[8px] tracking-widest uppercase px-1.5 py-0.5 rounded-full"
@@ -199,10 +199,12 @@ export default function Profile() {
   const { user, isAdmin, signOut } = useAuth()
   const { dark, toggle }           = useTheme()
   const navigate                   = useNavigate()
-  const [privacyOpen, setPrivacyOpen] = useState(false)
-  const { likedIds }               = useLikes()
-  const { products }               = useProducts()
-  const savedProducts              = products.filter(p => likedIds.has(p.id))
+  const [privacyOpen, setPrivacyOpen]   = useState(false)
+  const [showAllSaved, setShowAllSaved] = useState(false)
+  const { likedIds }                    = useLikes()
+  const { products }                    = useProducts()
+  const savedProducts                   = products.filter(p => likedIds.has(p.id))
+  const visibleSaved                    = showAllSaved ? savedProducts : savedProducts.slice(0, 4)
 
   const showAdminButton = isAdmin || (user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase()))
 
@@ -328,11 +330,21 @@ export default function Profile() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {savedProducts.map(product => (
-                <SavedCard key={product.id} product={product} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                {visibleSaved.map(product => (
+                  <SavedCard key={product.id} product={product} />
+                ))}
+              </div>
+              {!showAllSaved && savedProducts.length > 4 && (
+                <button
+                  onClick={() => setShowAllSaved(true)}
+                  className="w-full mt-3 py-2.5 rounded-2xl font-body text-sm border border-dp-border text-dp-gold"
+                >
+                  See more ({savedProducts.length - 4} more)
+                </button>
+              )}
+            </>
           )}
         </motion.section>
 

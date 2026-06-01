@@ -12,7 +12,7 @@ const EMPTY = {
   id: '', name: '', category: 'woody', price: 0, description: '',
   notes: { top: '', heart: '', base: '' },
   longevity: 'All day', occasion: '', size: '50ml',
-  placeholderColor: '#C8A888', placeholderInitial: '', image: null,
+  placeholderColor: '#C8A888', placeholderInitial: '', images: [],
 }
 
 function Field({ label, children }) {
@@ -54,9 +54,15 @@ export default function AdminProducts() {
       Promise.all(
         seedProducts.map(p => {
           const existing = firestoreMap[p.id]
-          // Preserve any image the admin already uploaded — only seed the image if null
-          const toWrite = { ...p, updatedAt: serverTimestamp() }
-          if (existing?.image) toWrite.image = existing.image
+          // Preserve any images the admin already uploaded
+          const existingImages = existing?.images?.length
+            ? existing.images
+            : existing?.image ? [existing.image] : null
+          const toWrite = {
+            ...p,
+            images: existingImages ?? (p.image ? [p.image] : []),
+            updatedAt: serverTimestamp(),
+          }
           return setDoc(doc(db, 'products', p.id), toWrite, { merge: true })
         })
       )
@@ -67,7 +73,11 @@ export default function AdminProducts() {
   const inputCls = 'w-full rounded-xl px-3 py-2.5 text-sm outline-none'
 
   function openEdit(p) {
-    setForm(JSON.parse(JSON.stringify(p)))
+    const copy = JSON.parse(JSON.stringify(p))
+    // Normalize legacy single-image products
+    if (!copy.images?.length && copy.image) copy.images = [copy.image]
+    if (!copy.images) copy.images = []
+    setForm(copy)
     setIsNew(false)
   }
   function openNew() {
@@ -84,16 +94,24 @@ export default function AdminProducts() {
     } finally { setSeeding(false) }
   }
 
-  async function handleUpload(e) {
+  async function handleUploadSlot(e, i) {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
     try {
       const url = await uploadImage(file)
-      setForm(f => ({ ...f, image: url }))
+      setForm(f => {
+        const imgs = [...(f.images || [])]
+        imgs[i] = url
+        return { ...f, images: imgs }
+      })
     } catch (err) {
       alert(err.message)
     } finally { setUploading(false) }
+  }
+
+  function removeImg(i) {
+    setForm(f => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }))
   }
 
   async function save() {
@@ -101,8 +119,11 @@ export default function AdminProducts() {
     setSaving(true)
     try {
       const { id, ...data } = form
+      const images = form.images || []
       await setDoc(doc(db, 'products', id), {
         ...data,
+        images,
+        image: images[0] || null,
         price: Number(form.price) || 0,
         updatedAt: serverTimestamp(),
       }, { merge: true })
@@ -151,11 +172,16 @@ export default function AdminProducts() {
           const cat = categories.find(c => c.slug === p.category)
           return (
             <div key={p.id} className="rounded-2xl overflow-hidden flex flex-col" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-              <div className="h-28 flex items-center justify-center relative" style={{ background: `${p.placeholderColor}22` }}>
-                {p.image ? (
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+              <div className="h-28 relative overflow-hidden" style={{ background: `${p.placeholderColor}22` }}>
+                {(p.images?.[0] || p.image) ? (
+                  <img src={p.images?.[0] || p.image} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
-                  <span className="text-3xl font-bold" style={{ color: `${p.placeholderColor}` }}>{p.placeholderInitial}</span>
+                  <span className="absolute inset-0 flex items-center justify-center text-3xl font-bold" style={{ color: p.placeholderColor }}>{p.placeholderInitial}</span>
+                )}
+                {p.images?.length > 1 && (
+                  <span className="absolute bottom-1.5 right-1.5 font-body text-[9px] px-1.5 py-0.5 rounded-full bg-black/50 text-white">
+                    {p.images.length} photos
+                  </span>
                 )}
               </div>
               <div className="p-3 flex flex-col flex-1">
@@ -188,23 +214,41 @@ export default function AdminProducts() {
             </div>
 
             <div className="space-y-4">
-              {/* Image */}
+              {/* Images — up to 4 slots */}
               <div>
-                <span className="text-xs block mb-1.5" style={{ color: C.muted }}>Image</span>
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden shrink-0" style={{ background: `${form.placeholderColor}22` }}>
-                    {form.image
-                      ? <img src={form.image} alt="" className="w-full h-full object-cover" />
-                      : <span className="text-xl font-bold" style={{ color: form.placeholderColor }}>{form.placeholderInitial || '?'}</span>}
-                  </div>
-                  <label className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl cursor-pointer" style={{ background: 'rgba(255,255,255,0.05)', color: C.text }}>
-                    {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-                    {uploading ? 'Uploading…' : 'Upload photo'}
-                    <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading || !cloudinaryReady} className="hidden" />
-                  </label>
-                  {form.image && (
-                    <button onClick={() => setForm(f => ({ ...f, image: null }))} className="text-xs" style={{ color: '#EF4444' }}>Remove</button>
-                  )}
+                <span className="text-xs block mb-2" style={{ color: C.muted }}>
+                  Photos (up to 4) {uploading && <Loader2 size={11} className="inline animate-spin ml-1" />}
+                </span>
+                <div className="grid grid-cols-4 gap-2">
+                  {[0, 1, 2, 3].map(i => {
+                    const url = form.images?.[i]
+                    return (
+                      <div key={i} className="relative rounded-xl overflow-hidden"
+                        style={{ aspectRatio: '1', background: C.bg, border: `1px solid ${C.border}` }}>
+                        {url ? (
+                          <>
+                            <img src={url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                            <button
+                              onClick={() => removeImg(i)}
+                              className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                              style={{ background: 'rgba(0,0,0,0.65)' }}
+                            >
+                              <X size={10} style={{ color: '#fff' }} />
+                            </button>
+                          </>
+                        ) : (
+                          <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer gap-1"
+                            style={{ color: C.muted }}>
+                            <Upload size={13} />
+                            <span className="text-[9px]">{i === 0 ? 'Main' : `+${i + 1}`}</span>
+                            <input type="file" accept="image/*" className="hidden"
+                              disabled={uploading || !cloudinaryReady}
+                              onChange={e => handleUploadSlot(e, i)} />
+                          </label>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
                 {!cloudinaryReady && <p className="text-[11px] mt-1.5" style={{ color: '#EAB308' }}>Set Cloudinary env vars to enable uploads.</p>}
               </div>

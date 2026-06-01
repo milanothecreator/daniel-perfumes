@@ -27,6 +27,10 @@ export function ProductsProvider({ children }) {
           if (!isGoodImage(data.image) && staticMap[data.id]?.image) {
             data.image = staticMap[data.id].image
           }
+          // Normalize to images[] array for multi-image support
+          if (!data.images?.length) {
+            data.images = data.image ? [data.image] : []
+          }
           return data
         }))
       },
