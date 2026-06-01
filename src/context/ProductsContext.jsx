@@ -24,13 +24,12 @@ export function ProductsProvider({ children }) {
         const isGoodImage = url => url && (url.includes('cloudinary') || /photo-\d{10}/.test(url))
         setProducts(snap.docs.map(d => {
           const data = { id: d.id, ...d.data() }
-          if (!isGoodImage(data.image) && staticMap[data.id]?.image) {
-            data.image = staticMap[data.id].image
-          }
-          // Normalize to images[] array for multi-image support
-          if (!data.images?.length) {
-            data.images = data.image ? [data.image] : []
-          }
+          // Keep only working URLs; old short-ID Unsplash links are dead.
+          let images = (data.images || []).filter(isGoodImage)
+          if (!images.length && isGoodImage(data.image)) images = [data.image]
+          if (!images.length && staticMap[data.id]?.image) images = [staticMap[data.id].image]
+          data.images = images
+          data.image = images[0] || null
           return data
         }))
       },

@@ -41,12 +41,12 @@ export default function AdminProducts() {
     return onSnapshot(collection(db, 'products'), snap => {
       const firestoreProducts = snap.docs.map(d => {
         const data = { id: d.id, ...d.data() }
-        if (!isGoodImage(data.image) && staticMap[data.id]?.image) {
-          data.image = staticMap[data.id].image
-        }
-        if (!data.images?.length) {
-          data.images = data.image ? [data.image] : []
-        }
+        // Keep only working URLs; old short-ID Unsplash links are dead.
+        let images = (data.images || []).filter(isGoodImage)
+        if (!images.length && isGoodImage(data.image)) images = [data.image]
+        if (!images.length && staticMap[data.id]?.image) images = [staticMap[data.id].image]
+        data.images = images
+        data.image = images[0] || null
         return data
       })
       setProducts(firestoreProducts)
