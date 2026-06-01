@@ -138,75 +138,106 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #0D0A06 0%, #1C1408 40%, #2A1D08 70%, #1A1008 100%)',
-            border: '1px solid rgba(154,117,32,0.35)',
-            boxShadow: '0 0 40px rgba(154,117,32,0.08), inset 0 1px 0 rgba(154,117,32,0.15)',
+            background: '#0D0A06',
+            border: '1px solid rgba(154,117,32,0.2)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
           }}
         >
-          {/* layered glow gradients */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 60% at 20% 50%, rgba(154,117,32,0.18), transparent 65%)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 80% at 85% 10%, rgba(200,160,60,0.12), transparent 55%)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 40% 40% at 90% 90%, rgba(154,117,32,0.08), transparent 50%)' }} />
+          {/* aurora gradient zone — top ~45% of card */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[170px] pointer-events-none"
+            style={{
+              background: 'linear-gradient(135deg, #C8601A 0%, #D4930A 30%, #9A7520 55%, #5A3A10 80%, transparent 100%)',
+              filter: 'blur(0px)',
+            }}
+          />
+          {/* soft blur blobs inside the aurora for the mesh effect */}
+          <div className="absolute top-0 left-0 right-0 h-[170px] pointer-events-none overflow-hidden">
+            <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: 'rgba(220,140,20,0.55)', filter: 'blur(40px)', top: -40, left: -20 }} />
+            <div style={{ position: 'absolute', width: 160, height: 160, borderRadius: '50%', background: 'rgba(200,80,20,0.45)', filter: 'blur(50px)', top: -30, right: 10 }} />
+            <div style={{ position: 'absolute', width: 120, height: 120, borderRadius: '50%', background: 'rgba(180,120,10,0.35)', filter: 'blur(35px)', top: 30, left: '35%' }} />
           </div>
-
-          {/* sparkle dots */}
-          <div className="absolute top-5 left-8 w-1 h-1 rounded-full bg-dp-gold/50" />
-          <div className="absolute top-10 left-16 w-0.5 h-0.5 rounded-full bg-dp-gold/30" />
-          <div className="absolute top-3 right-36 w-1.5 h-1.5 rounded-full bg-dp-gold/25" />
-          <div className="absolute bottom-8 left-10 w-1 h-1 rounded-full bg-dp-gold/20" />
-          <div className="absolute bottom-12 left-24 w-0.5 h-0.5 rounded-full bg-white/20" />
-
-          {/* decorative bottle silhouette */}
-          <div className="absolute right-0 top-0 bottom-0 w-44 pointer-events-none select-none overflow-hidden">
-            <svg viewBox="0 0 160 280" fill="none" xmlns="http://www.w3.org/2000/svg"
-              className="absolute right-[-20px] top-1/2 -translate-y-1/2 h-[260px] w-auto opacity-[0.07]">
-              <rect x="52" y="2" width="56" height="14" rx="4" fill="#9A7520"/>
-              <rect x="60" y="16" width="40" height="20" rx="3" fill="#9A7520"/>
-              <path d="M44 36 Q40 50 38 70 L38 240 Q38 258 80 258 Q122 258 122 240 L122 70 Q120 50 116 36 Z" fill="#9A7520"/>
-              <path d="M55 80 L55 220 Q55 235 80 235 Q105 235 105 220 L105 80 Z" fill="#9A7520" opacity="0.4"/>
-              <rect x="65" y="100" width="30" height="1.5" rx="1" fill="#9A7520" opacity="0.6"/>
-              <rect x="62" y="115" width="36" height="1" rx="1" fill="#9A7520" opacity="0.4"/>
-              <text x="80" y="170" textAnchor="middle" fontFamily="serif" fontSize="11" fill="#9A7520" opacity="0.8">Daniel</text>
-              <text x="80" y="185" textAnchor="middle" fontFamily="serif" fontSize="7" fill="#9A7520" opacity="0.6">PERFUMES</text>
-            </svg>
-          </div>
+          {/* fade-to-dark transition */}
+          <div
+            className="absolute top-[120px] left-0 right-0 h-[80px] pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent, #0D0A06)' }}
+          />
 
           {/* content */}
-          <div className="relative z-10 p-7 pr-32">
-            {/* label with line */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-px w-6 bg-dp-gold/50" />
-              <p className="font-body text-[9px] tracking-[0.45em] uppercase text-dp-gold/80">Personalised For You</p>
+          <div className="relative z-10 pt-6 pb-7 px-6">
+            {/* avatar-style icon centered at the aurora/dark boundary */}
+            <div className="flex justify-start mb-4">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                style={{
+                  background: 'rgba(13,10,6,0.75)',
+                  border: '1.5px solid rgba(200,160,60,0.5)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                }}
+              >
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <rect x="10" y="1" width="8" height="3" rx="1.5" fill="#C8A040" opacity="0.9"/>
+                  <rect x="11.5" y="4" width="5" height="4" rx="1" fill="#C8A040" opacity="0.7"/>
+                  <path d="M7 8 Q6 11 6 14 L6 23 Q6 27 14 27 Q22 27 22 23 L22 14 Q22 11 21 8 Z" fill="#C8A040" opacity="0.85"/>
+                  <path d="M10 13 L10 22 Q10 25 14 25 Q18 25 18 22 L18 13 Z" fill="#C8A040" opacity="0.25"/>
+                </svg>
+              </div>
             </div>
 
-            <h2 className="font-display text-3xl text-dp-cream leading-tight mb-3">
+            {/* tags row */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="font-body text-[9px] tracking-[0.35em] uppercase px-2.5 py-1 rounded-full"
+                style={{ background: 'rgba(154,117,32,0.18)', color: '#C8A040', border: '1px solid rgba(154,117,32,0.3)' }}>
+                Personalised
+              </span>
+              <span className="font-body text-[9px] tracking-[0.35em] uppercase px-2.5 py-1 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                Free · 1 min
+              </span>
+            </div>
+
+            <h2 className="font-display text-[1.6rem] text-dp-cream leading-snug mb-2">
               Find your<br />
-              <span className="italic" style={{ color: '#C8A040' }}>signature scent</span>
+              <span className="italic" style={{ color: '#D4A030' }}>signature scent</span>
             </h2>
 
-            <p className="font-body text-dp-muted text-[11px] leading-relaxed mb-6 max-w-[200px]">
-              6 questions. Our AI matches you to the perfect fragrance.
+            <p className="font-body text-dp-muted text-[11px] leading-relaxed mb-6 max-w-[220px]">
+              Answer 6 quick questions and our AI matches you to the perfect fragrance.
             </p>
 
-            <Link
-              to="/quiz"
-              className="inline-flex items-center gap-2 font-body text-xs font-semibold tracking-widest uppercase text-white px-5 py-2.5 rounded-full transition-all"
-              style={{
-                background: 'linear-gradient(135deg, #9A7520 0%, #C8A040 50%, #9A7520 100%)',
-                backgroundSize: '200% 100%',
-                boxShadow: '0 4px 20px rgba(154,117,32,0.4), 0 1px 0 rgba(255,255,255,0.1) inset',
-              }}
-            >
-              Start the Quiz
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
+            {/* action row */}
+            <div className="flex items-center gap-3">
+              <Link
+                to="/quiz"
+                className="flex-1 flex items-center justify-center gap-2 font-body text-xs font-semibold tracking-widest uppercase text-white py-3 rounded-2xl transition-all"
+                style={{
+                  background: '#111',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+                }}
+              >
+                + Start the Quiz
+              </Link>
+              <button
+                className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1.5C8 1.5 3 5.5 3 9a5 5 0 0010 0C13 5.5 8 1.5 8 1.5z" stroke="rgba(154,117,32,0.7)" strokeWidth="1.2" fill="rgba(154,117,32,0.12)"/>
+                </svg>
+              </button>
+              <button
+                className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 4.5A2.5 2.5 0 014.5 2h7A2.5 2.5 0 0114 4.5v7a2.5 2.5 0 01-2.5 2.5h-7A2.5 2.5 0 012 11.5v-7z" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" fill="none"/>
+                  <path d="M5 8h6M8 5v6" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
-
-          {/* bottom shimmer line */}
-          <div className="absolute bottom-0 left-8 right-8 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(154,117,32,0.4), transparent)' }} />
         </motion.div>
       </section>
 
