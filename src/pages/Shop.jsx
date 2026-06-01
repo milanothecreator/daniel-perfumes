@@ -8,6 +8,7 @@ import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
 import { useCart } from '../context/CartContext'
 import { useLikes } from '../context/LikesContext'
+import { usePrivacy } from '../context/PrivacyContext'
 import { useAuth } from '../context/AuthContext'
 import { db, firebaseReady } from '../lib/firebase'
 
@@ -92,6 +93,7 @@ export default function Shop() {
   const { user }                  = useAuth()
   const { products }              = useProducts()
   const { likedIds }              = useLikes()
+  const { prefs }                 = usePrivacy()
 
   useEffect(() => {
     if (!firebaseReady || !db) return
@@ -115,7 +117,7 @@ export default function Shop() {
   }, [activeTab, search, products])
 
   const newArrivals = useMemo(() => {
-    if (!likedIds.size) return products.slice(0, 6)
+    if (!likedIds.size || !prefs.scentRecommendations) return products.slice(0, 6)
     const catScore = {}
     products.filter(p => likedIds.has(p.id)).forEach(p => {
       catScore[p.category] = (catScore[p.category] || 0) + 1
@@ -124,7 +126,7 @@ export default function Shop() {
       .filter(p => !likedIds.has(p.id))
       .sort((a, b) => (catScore[b.category] || 0) - (catScore[a.category] || 0))
       .slice(0, 6)
-  }, [products, likedIds])
+  }, [products, likedIds, prefs.scentRecommendations])
 
   return (
     <main className="min-h-screen bg-dp-bg pb-24">
@@ -259,8 +261,8 @@ export default function Shop() {
         >
           <div className="flex items-center justify-between px-4 sm:px-6 mb-4">
             <h2 className="font-display text-lg text-dp-cream flex items-center gap-2">
-              {likedIds.size > 0 ? 'For You' : 'New Arrivals'}
-              {likedIds.size > 0 && <Heart size={13} className="fill-red-400 text-red-400" />}
+              {likedIds.size > 0 && prefs.scentRecommendations ? 'For You' : 'New Arrivals'}
+              {likedIds.size > 0 && prefs.scentRecommendations && <Heart size={13} className="fill-red-400 text-red-400" />}
             </h2>
             <Link to="/shop" onClick={() => setActiveTab('all')} className="flex items-center gap-0.5 font-body text-xs text-dp-gold hover:text-dp-gold-light transition-colors">
               See all <ChevronRight size={13} />

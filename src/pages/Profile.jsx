@@ -1,39 +1,54 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ChevronRight, ShoppingBag, Sparkles, Star, Heart, LogOut,
   Mail, MapPin, Moon, Sun, User, Shield, RefreshCw,
-  MessageSquare, Bell, Sliders, Trash2, ChevronDown, Check, X, Edit3,
+  MessageSquare, Bell, Sliders, ChevronDown, Check, X, Edit3,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import { useLikes } from '../context/LikesContext'
+import { usePrivacy } from '../context/PrivacyContext'
+import { useProducts } from '../context/ProductsContext'
+import { categories } from '../data/products'
 import { generalWhatsApp } from '../lib/whatsapp'
 
 const ADMIN_EMAILS = ['musaanthony123456@gmail.com']
 
 const providerLabel = { google: 'Google', apple: 'Apple', facebook: 'Facebook', email: 'Email', password: 'Email' }
 
-function loadPrivacy() {
-  try { return JSON.parse(localStorage.getItem('dp_privacy')) } catch { return null }
-}
-const defaultPrivacy = {
-  whatsappMarketing: true,
-  orderNotifications: true,
-  scentRecommendations: true,
-  dataCollection: false,
+function SavedCard({ product }) {
+  const cat = categories.find(c => c.slug === product.category)
+  return (
+    <Link
+      to={`/product/${product.id}`}
+      className="bg-dp-card border border-dp-border rounded-2xl overflow-hidden block active:scale-95 transition-transform"
+    >
+      <div
+        className="relative h-28 flex items-center justify-center"
+        style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
+      >
+        {product.image
+          ? <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+          : <span className="font-display font-bold text-4xl select-none" style={{ color: `${product.placeholderColor}60` }}>{product.placeholderInitial}</span>}
+        <span
+          className="absolute top-2 left-2 font-body text-[8px] tracking-widest uppercase px-1.5 py-0.5 rounded-full"
+          style={{ background: `${cat?.accent}18`, color: cat?.accent, border: `1px solid ${cat?.accent}35` }}
+        >
+          {cat?.name}
+        </span>
+      </div>
+      <div className="p-2.5">
+        <p className="font-display text-dp-cream text-xs leading-snug truncate">{product.name}</p>
+        <p className="font-body text-[10px] text-dp-gold mt-1">{(product.price / 1000).toFixed(0)}k UGX</p>
+      </div>
+    </Link>
+  )
 }
 
 function PrivacyPanel({ onClose }) {
-  const [prefs, setPrefs] = useState(() => ({ ...defaultPrivacy, ...loadPrivacy() }))
-
-  function toggle(key) {
-    setPrefs(p => {
-      const next = { ...p, [key]: !p[key] }
-      localStorage.setItem('dp_privacy', JSON.stringify(next))
-      return next
-    })
-  }
+  const { prefs, toggle } = usePrivacy()
 
   const items = [
     {
@@ -165,6 +180,9 @@ export default function Profile() {
   const { dark, toggle }           = useTheme()
   const navigate                   = useNavigate()
   const [privacyOpen, setPrivacyOpen] = useState(false)
+  const { likedIds }               = useLikes()
+  const { products }               = useProducts()
+  const savedProducts              = products.filter(p => likedIds.has(p.id))
 
   const showAdminButton = isAdmin || (user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase()))
 
@@ -222,7 +240,7 @@ export default function Profile() {
         >
           {[
             { n: '0',   label: 'Orders' },
-            { n: '0',   label: 'Saved' },
+            { n: likedIds.size.toString(), label: 'Saved' },
             { n: new Date(user.createdAt).getFullYear().toString(), label: 'Since' },
           ].map((s, i, arr) => (
             <div key={s.label} className={`flex-1 text-center py-3.5 ${i < arr.length - 1 ? 'border-r border-dp-border' : ''}`}>
@@ -242,7 +260,7 @@ export default function Profile() {
         >
           {[
             { icon: ShoppingBag, value: '0',    label: 'Orders',  sub: 'Total' },
-            { icon: Heart,       value: '0',    label: 'Saved',   sub: 'Items' },
+            { icon: Heart,       value: likedIds.size.toString(), label: 'Saved', sub: 'Items' },
             { icon: Sparkles,    value: '1',    label: 'Quiz',    sub: 'Taken', badge: 'Done' },
             { icon: Star,        value: 'Gold', label: 'Loyalty', sub: 'Status' },
           ].map((card, i) => (
@@ -267,6 +285,36 @@ export default function Profile() {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* ── Saved Items ── */}
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.26 }}
+          className="mb-6"
+        >
+          <div className="flex items-center justify-between mb-3 px-1">
+            <p className="font-body text-[10px] text-dp-muted uppercase tracking-widest">Saved Items</p>
+            {savedProducts.length > 0 && (
+              <Link to="/shop" className="font-body text-xs text-dp-gold">Browse more</Link>
+            )}
+          </div>
+          {savedProducts.length === 0 ? (
+            <div className="bg-dp-card border border-dp-border rounded-2xl p-6 text-center">
+              <Heart size={28} className="text-dp-border mx-auto mb-3" />
+              <p className="font-body text-sm text-dp-muted mb-3">No saved items yet</p>
+              <Link to="/shop" className="font-body text-xs text-dp-gold hover:text-dp-gold-light transition-colors">
+                Browse fragrances →
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {savedProducts.map(product => (
+                <SavedCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </motion.section>
 
         {/* ── Loyalty banner ── */}
         <motion.div

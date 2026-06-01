@@ -14,6 +14,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { CartProvider } from './context/CartContext'
 import { LikesProvider } from './context/LikesContext'
+import { PrivacyProvider } from './context/PrivacyContext'
 import { ProductsProvider } from './context/ProductsContext'
 import CartSheet from './components/CartSheet'
 import AdminRoute from './admin/AdminRoute'
@@ -159,7 +160,9 @@ export default function App() {
           <ProductsProvider>
             <CartProvider>
               <LikesProvider>
+              <PrivacyProvider>
                 <AppInner />
+              </PrivacyProvider>
               </LikesProvider>
             </CartProvider>
           </ProductsProvider>
