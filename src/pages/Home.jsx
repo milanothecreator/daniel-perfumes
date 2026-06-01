@@ -138,29 +138,24 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: '#0D0A06',
-            border: '1px solid rgba(154,117,32,0.2)',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+            background: 'rgba(6, 12, 28, 0.85)',
+            border: '1px solid rgba(100,160,255,0.18)',
+            boxShadow: '0 8px 40px rgba(0,10,40,0.6), inset 0 1px 0 rgba(180,220,255,0.08)',
+            backdropFilter: 'blur(24px)',
           }}
         >
-          {/* aurora gradient zone — top ~45% of card */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[170px] pointer-events-none"
-            style={{
-              background: 'linear-gradient(135deg, #C8601A 0%, #D4930A 30%, #9A7520 55%, #5A3A10 80%, transparent 100%)',
-              filter: 'blur(0px)',
-            }}
-          />
-          {/* soft blur blobs inside the aurora for the mesh effect */}
-          <div className="absolute top-0 left-0 right-0 h-[170px] pointer-events-none overflow-hidden">
-            <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: 'rgba(220,140,20,0.55)', filter: 'blur(40px)', top: -40, left: -20 }} />
-            <div style={{ position: 'absolute', width: 160, height: 160, borderRadius: '50%', background: 'rgba(200,80,20,0.45)', filter: 'blur(50px)', top: -30, right: 10 }} />
-            <div style={{ position: 'absolute', width: 120, height: 120, borderRadius: '50%', background: 'rgba(180,120,10,0.35)', filter: 'blur(35px)', top: 30, left: '35%' }} />
+          {/* aurora blob zone — top portion */}
+          <div className="absolute top-0 left-0 right-0 h-[170px] pointer-events-none overflow-hidden" style={{ borderRadius: '24px 24px 0 0' }}>
+            <div style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', background: 'rgba(40,100,255,0.55)', filter: 'blur(45px)', top: -60, left: -30 }} />
+            <div style={{ position: 'absolute', width: 170, height: 170, borderRadius: '50%', background: 'rgba(80,160,255,0.4)', filter: 'blur(50px)', top: -40, right: -10 }} />
+            <div style={{ position: 'absolute', width: 130, height: 130, borderRadius: '50%', background: 'rgba(30,70,200,0.35)', filter: 'blur(38px)', top: 20, left: '30%' }} />
+            {/* glassy sheen highlight */}
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 50%)' }} />
           </div>
           {/* fade-to-dark transition */}
           <div
-            className="absolute top-[120px] left-0 right-0 h-[80px] pointer-events-none"
-            style={{ background: 'linear-gradient(to bottom, transparent, #0D0A06)' }}
+            className="absolute top-[110px] left-0 right-0 h-[90px] pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent, rgba(6,12,28,0.95))' }}
           />
 
           {/* content */}
@@ -170,17 +165,17 @@ export default function Home() {
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: 'rgba(13,10,6,0.75)',
-                  border: '1.5px solid rgba(200,160,60,0.5)',
-                  backdropFilter: 'blur(8px)',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1.5px solid rgba(120,180,255,0.35)',
+                  backdropFilter: 'blur(16px)',
+                  boxShadow: '0 4px 24px rgba(40,100,255,0.2), inset 0 1px 0 rgba(255,255,255,0.12)',
                 }}
               >
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <rect x="10" y="1" width="8" height="3" rx="1.5" fill="#C8A040" opacity="0.9"/>
-                  <rect x="11.5" y="4" width="5" height="4" rx="1" fill="#C8A040" opacity="0.7"/>
-                  <path d="M7 8 Q6 11 6 14 L6 23 Q6 27 14 27 Q22 27 22 23 L22 14 Q22 11 21 8 Z" fill="#C8A040" opacity="0.85"/>
-                  <path d="M10 13 L10 22 Q10 25 14 25 Q18 25 18 22 L18 13 Z" fill="#C8A040" opacity="0.25"/>
+                  <rect x="10" y="1" width="8" height="3" rx="1.5" fill="#80B4FF" opacity="0.9"/>
+                  <rect x="11.5" y="4" width="5" height="4" rx="1" fill="#80B4FF" opacity="0.7"/>
+                  <path d="M7 8 Q6 11 6 14 L6 23 Q6 27 14 27 Q22 27 22 23 L22 14 Q22 11 21 8 Z" fill="#5090F0" opacity="0.85"/>
+                  <path d="M10 13 L10 22 Q10 25 14 25 Q18 25 18 22 L18 13 Z" fill="#A0C8FF" opacity="0.25"/>
                 </svg>
               </div>
             </div>
@@ -188,18 +183,18 @@ export default function Home() {
             {/* tags row */}
             <div className="flex items-center gap-2 mb-3">
               <span className="font-body text-[9px] tracking-[0.35em] uppercase px-2.5 py-1 rounded-full"
-                style={{ background: 'rgba(154,117,32,0.18)', color: '#C8A040', border: '1px solid rgba(154,117,32,0.3)' }}>
+                style={{ background: 'rgba(60,120,255,0.15)', color: '#90C0FF', border: '1px solid rgba(80,140,255,0.3)', backdropFilter: 'blur(8px)' }}>
                 Personalised
               </span>
               <span className="font-body text-[9px] tracking-[0.35em] uppercase px-2.5 py-1 rounded-full"
-                style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}>
                 Free · 1 min
               </span>
             </div>
 
             <h2 className="font-display text-[1.6rem] text-dp-cream leading-snug mb-2">
               Find your<br />
-              <span className="italic" style={{ color: '#D4A030' }}>signature scent</span>
+              <span className="italic" style={{ color: '#7EB8FF' }}>signature scent</span>
             </h2>
 
             <p className="font-body text-dp-muted text-[11px] leading-relaxed mb-6 max-w-[220px]">
@@ -212,24 +207,25 @@ export default function Home() {
                 to="/quiz"
                 className="flex-1 flex items-center justify-center gap-2 font-body text-xs font-semibold tracking-widest uppercase text-white py-3 rounded-2xl transition-all"
                 style={{
-                  background: '#111',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(120,180,255,0.2)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 2px 16px rgba(40,100,255,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
                 }}
               >
                 + Start the Quiz
               </Link>
               <button
                 className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(120,180,255,0.15)', backdropFilter: 'blur(12px)' }}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 1.5C8 1.5 3 5.5 3 9a5 5 0 0010 0C13 5.5 8 1.5 8 1.5z" stroke="rgba(154,117,32,0.7)" strokeWidth="1.2" fill="rgba(154,117,32,0.12)"/>
+                  <path d="M8 1.5C8 1.5 3 5.5 3 9a5 5 0 0010 0C13 5.5 8 1.5 8 1.5z" stroke="rgba(100,160,255,0.7)" strokeWidth="1.2" fill="rgba(60,120,255,0.12)"/>
                 </svg>
               </button>
               <button
                 className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(120,180,255,0.15)', backdropFilter: 'blur(12px)' }}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M2 4.5A2.5 2.5 0 014.5 2h7A2.5 2.5 0 0114 4.5v7a2.5 2.5 0 01-2.5 2.5h-7A2.5 2.5 0 012 11.5v-7z" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" fill="none"/>
