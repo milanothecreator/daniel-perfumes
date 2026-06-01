@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Check, ChevronLeft, Trophy } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
 import ShaderBackground from '../components/ui/shader-background'
-import { GooeyLoader } from '../components/ui/loader-10'
+import Loader from '../components/ui/loader'
 import { useProducts } from '../context/ProductsContext'
 
 // ── Questions ─────────────────────────────────────────────────────────────────
@@ -310,15 +310,12 @@ function CircleProgress({ current, total }) {
 // ── Loading screen ────────────────────────────────────────────────────────────
 function LoadingScreen() {
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center px-4" style={{ zIndex: 1 }}>
-      <GooeyLoader
-        primaryColor="#7C3AED"
-        secondaryColor="#4F46E5"
-        borderColor="rgba(167,139,250,0.4)"
-        className="mb-8"
-      />
+    <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-4" style={{ zIndex: 1 }}>
+      <div className="relative w-[200px] h-[200px]">
+        <Loader />
+      </div>
       <motion.p
-        className="font-display text-2xl mb-2"
+        className="font-display text-2xl"
         style={{ color: '#A78BFA' }}
         animate={{ opacity: [0.6, 1, 0.6] }}
         transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
