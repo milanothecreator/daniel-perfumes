@@ -38,15 +38,15 @@ export default function Product() {
   }
 
   return (
-    <main className="min-h-screen bg-dp-bg pb-32">
+    <main className="min-h-screen bg-dp-bg pt-16 pb-32">
 
       {/* ── Full-width hero image ── */}
       <div
-        className="relative pt-16 h-72 sm:h-96 w-full overflow-hidden"
+        className="relative h-64 sm:h-80 w-full overflow-hidden"
         style={{ background: `linear-gradient(145deg, ${product.placeholderColor}55, ${product.placeholderColor}18)` }}
       >
         {product.image ? (
-          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-contain" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="font-display font-bold text-[120px] leading-none select-none pointer-events-none"
@@ -60,14 +60,14 @@ export default function Product() {
         {/* back button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-[72px] left-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+          className="absolute top-3 left-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
         >
           <ArrowLeft size={17} className="text-white" />
         </button>
         {/* share */}
         <button
           onClick={() => navigator.share?.({ title: product.name, url: window.location.href })}
-          className="absolute top-[72px] right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+          className="absolute top-3 right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
         >
           <Share2 size={15} className="text-white" />
         </button>
@@ -95,7 +95,7 @@ export default function Product() {
             <span className="font-display text-2xl text-dp-cream">{product.price.toLocaleString('en-UG')}</span>
           </div>
           <span className="font-body text-xs text-dp-muted border border-dp-border rounded-full px-3 py-1 tracking-widest">
-            50ML
+            {product.size?.toUpperCase() || '50ML'}
           </span>
         </div>
 
@@ -147,7 +147,7 @@ export default function Product() {
                   ['Category', `${cat?.icon ?? ''} ${cat?.name ?? ''}`.trim()],
                   ['Occasion', product.occasion],
                   ['Longevity', `${longevityIcon} ${product.longevity}`],
-                  ['Size', '50 ML'],
+                  ['Size', product.size?.toUpperCase() || '50ML'],
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between py-3">
                     <span className="font-body text-xs text-dp-muted uppercase tracking-widest">{label}</span>

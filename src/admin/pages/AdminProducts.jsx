@@ -11,7 +11,7 @@ const LONGEVITY = ['All day', 'Intense & lingering', 'Light & fresh']
 const EMPTY = {
   id: '', name: '', category: 'woody', price: 0, description: '',
   notes: { top: '', heart: '', base: '' },
-  longevity: 'All day', occasion: '',
+  longevity: 'All day', occasion: '', size: '50ml',
   placeholderColor: '#C8A888', placeholderInitial: '', image: null,
 }
 
@@ -250,6 +250,10 @@ export default function AdminProducts() {
                   <input className={inputCls} style={inputStyle} value={form.occasion} onChange={e => setForm(f => ({ ...f, occasion: e.target.value }))} />
                 </Field>
               </div>
+
+              <Field label="Size (e.g. 50ml, 100ml)">
+                <input className={inputCls} style={inputStyle} value={form.size || ''} placeholder="50ml" onChange={e => setForm(f => ({ ...f, size: e.target.value }))} />
+              </Field>
 
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Fallback color">
