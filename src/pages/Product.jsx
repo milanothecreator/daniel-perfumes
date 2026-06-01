@@ -1,145 +1,234 @@
+import { useState } from 'react'
 import { useParams, Link, Navigate, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowLeft, Share2, Heart, ShoppingBag, Check } from 'lucide-react'
 import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
-import { orderWhatsApp } from '../lib/whatsapp'
+import { useCart } from '../context/CartContext'
+import { useLikes } from '../context/LikesContext'
 import { useAuth } from '../context/AuthContext'
-import ProductCard from '../components/ProductCard'
+
+const TABS = ['Description', 'Scent Notes', 'Details']
 
 export default function Product() {
-  const { id } = useParams()
+  const { id }                     = useParams()
   const { products, getProductById } = useProducts()
-  const product = getProductById(id)
-  const { user } = useAuth()
-  const navigate = useNavigate()
+  const product                    = getProductById(id)
+  const { user }                   = useAuth()
+  const navigate                   = useNavigate()
+  const { addItem }                = useCart()
+  const { isLiked, toggleLike }    = useLikes()
+  const [activeTab, setActiveTab]  = useState(0)
+  const [added, setAdded]          = useState(false)
 
   if (!product) return <Navigate to="/shop" replace />
 
-  const cat = categories.find(c => c.slug === product.category)
-  const related = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4)
-
+  const cat     = categories.find(c => c.slug === product.category)
+  const liked   = isLiked(product.id)
+  const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 8)
+  const allNotes = [product.notes.top, product.notes.heart, product.notes.base].filter(Boolean).join(', ')
   const longevityIcon =
     product.longevity === 'Intense & lingering' ? '🌙' :
     product.longevity === 'All day' ? '☀️' : '🌤️'
 
+  function handleAdd() {
+    addItem(product)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 1200)
+  }
+
   return (
-    <main className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+    <main className="min-h-screen bg-dp-bg pb-32">
 
-        {/* Breadcrumb */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
-          <Link to="/shop" className="font-body text-xs text-dp-muted hover:text-dp-gold transition-colors">
-            ← Back to Shop
-          </Link>
-        </motion.div>
-
-        {/* Product hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid md:grid-cols-2 gap-8 mb-14"
-        >
-          {/* Image */}
-          <div
-            className="relative rounded-3xl overflow-hidden h-72 sm:h-96 flex items-center justify-center"
-            style={{ background: `linear-gradient(145deg, ${product.placeholderColor}, #FFFFFF)` }}
-          >
-            {product.image ? (
-              <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-            ) : (
-              <span className="font-display font-bold text-7xl sm:text-8xl text-dp-cream/10 select-none">
-                {product.placeholderInitial}
-              </span>
-            )}
-            <span
-              className="absolute top-3 left-3 font-body text-xs tracking-widest uppercase px-3 py-1 rounded-full"
-              style={{ background: `${cat?.accent}30`, color: cat?.accent, border: `1px solid ${cat?.accent}50` }}
-            >
-              {cat?.icon} {cat?.name}
-            </span>
-            <span className="absolute top-3 right-3 font-body text-xs text-dp-muted bg-dp-card/80 px-2 py-1 rounded-full">
-              {longevityIcon} {product.longevity}
+      {/* ── Full-width hero image ── */}
+      <div
+        className="relative pt-16 h-72 sm:h-96 w-full overflow-hidden"
+        style={{ background: `linear-gradient(145deg, ${product.placeholderColor}55, ${product.placeholderColor}18)` }}
+      >
+        {product.image ? (
+          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="font-display font-bold text-[120px] leading-none select-none pointer-events-none"
+              style={{ color: `${product.placeholderColor}25` }}>
+              {product.placeholderInitial}
             </span>
           </div>
-
-          {/* Details */}
-          <div className="flex flex-col justify-center">
-            <p className="font-body text-xs tracking-[0.3em] uppercase mb-2" style={{ color: cat?.accent }}>
-              {cat?.name} · {product.occasion}
-            </p>
-            <h1 className="font-display text-4xl sm:text-5xl text-dp-cream leading-tight mb-4">
-              {product.name}
-            </h1>
-            <p className="font-body text-dp-muted leading-relaxed mb-6">
-              {product.description}
-            </p>
-
-            {/* Notes */}
-            <div className="card-dark p-4 mb-6 space-y-3">
-              <p className="font-body text-[10px] text-dp-gold uppercase tracking-widest mb-1">Fragrance Notes</p>
-              <NoteRow label="Top" value={product.notes.top} />
-              <NoteRow label="Heart" value={product.notes.heart} />
-              <NoteRow label="Base" value={product.notes.base} />
-            </div>
-
-            {/* Price + CTA */}
-            <div className="flex items-center gap-4">
-              <div>
-                <span className="font-display text-3xl text-dp-gold">
-                  {product.price.toLocaleString('en-UG')}
-                </span>
-                <span className="font-body text-xs text-dp-muted ml-1">UGX</span>
-              </div>
-              {user ? (
-                <a
-                  href={orderWhatsApp(product.name, product.price)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold text-sm px-6 py-3"
-                >
-                  Order on WhatsApp
-                </a>
-              ) : (
-                <button
-                  onClick={() => navigate('/auth', { state: { from: `/product/${product.id}` } })}
-                  className="btn-gold text-sm px-6 py-3"
-                >
-                  Sign in to Order
-                </button>
-              )}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Related products */}
-        {related.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <p className="font-body text-xs text-dp-muted uppercase tracking-widest mb-6">
-              You may also like
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {related.map(p => (
-                <ProductCard key={p.id} product={p} compact />
-              ))}
-            </div>
-          </motion.div>
         )}
+        {/* fade to bg at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dp-bg to-transparent" />
+        {/* back button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-[72px] left-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+        >
+          <ArrowLeft size={17} className="text-white" />
+        </button>
+        {/* share */}
+        <button
+          onClick={() => navigator.share?.({ title: product.name, url: window.location.href })}
+          className="absolute top-[72px] right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+        >
+          <Share2 size={15} className="text-white" />
+        </button>
+      </div>
+
+      {/* ── Content ── */}
+      <div className="px-4 sm:px-6 max-w-lg mx-auto">
+
+        {/* Category + name + notes summary */}
+        <div className="mt-1 mb-4">
+          <p className="font-body text-[11px] tracking-[0.25em] uppercase mb-1.5 flex items-center gap-1.5"
+            style={{ color: cat?.accent }}>
+            {cat?.icon} {cat?.name}
+          </p>
+          <h1 className="font-display text-3xl sm:text-4xl text-dp-cream leading-tight tracking-wide uppercase">
+            {product.name}
+          </h1>
+          <p className="font-body text-xs text-dp-muted mt-1.5 leading-relaxed">{allNotes}</p>
+        </div>
+
+        {/* Price + size pill */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-baseline gap-1">
+            <span className="font-body text-[11px] text-dp-muted uppercase tracking-widest">UGX</span>
+            <span className="font-display text-2xl text-dp-cream">{product.price.toLocaleString('en-UG')}</span>
+          </div>
+          <span className="font-body text-xs text-dp-muted border border-dp-border rounded-full px-3 py-1 tracking-widest">
+            50ML
+          </span>
+        </div>
+
+        {/* ── Tabs ── */}
+        <div className="flex border-b border-dp-border mb-5">
+          {TABS.map((tab, i) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(i)}
+              className={`flex-1 pb-3 font-body text-[11px] tracking-widest uppercase transition-colors ${
+                activeTab === i
+                  ? 'text-dp-cream border-b-2 border-dp-cream -mb-px'
+                  : 'text-dp-muted'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Tab content ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="mb-8 min-h-[80px]"
+          >
+            {activeTab === 0 && (
+              <p className="font-body text-sm text-dp-muted leading-relaxed">{product.description}</p>
+            )}
+
+            {activeTab === 1 && (
+              <div className="space-y-4">
+                {[['Top', product.notes.top], ['Heart', product.notes.heart], ['Base', product.notes.base]].map(([label, value]) => (
+                  <div key={label}>
+                    <p className="font-body text-[10px] text-dp-gold uppercase tracking-widest mb-1">{label} Notes</p>
+                    <p className="font-body text-sm text-dp-muted leading-relaxed">{value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 2 && (
+              <div className="divide-y divide-dp-border">
+                {[
+                  ['Category', `${cat?.icon ?? ''} ${cat?.name ?? ''}`.trim()],
+                  ['Occasion', product.occasion],
+                  ['Longevity', `${longevityIcon} ${product.longevity}`],
+                  ['Size', '50 ML'],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between py-3">
+                    <span className="font-body text-xs text-dp-muted uppercase tracking-widest">{label}</span>
+                    <span className="font-body text-sm text-dp-cream">{value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* ── You May Also Like ── */}
+        {related.length > 0 && (
+          <div className="mb-6">
+            <h2 className="font-display text-xl text-dp-cream mb-4">You May Also Like</h2>
+            <div
+              className="flex gap-3 overflow-x-auto pb-2"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {related.map(p => <RelatedCard key={p.id} product={p} />)}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Fixed bottom bar ── */}
+      <div
+        className="fixed left-0 right-0 z-40 px-4 flex items-center gap-3"
+        style={{
+          bottom: 'calc(66px)',
+          paddingTop: '10px',
+          paddingBottom: '10px',
+          background: 'rgb(var(--dp-bg) / 0.92)',
+          backdropFilter: 'blur(16px)',
+          borderTop: '1px solid rgb(var(--dp-border) / 0.5)',
+        }}
+      >
+        <button
+          onClick={() => toggleLike(product.id)}
+          className="w-12 h-12 rounded-full border flex items-center justify-center shrink-0 transition-all"
+          style={{
+            borderColor: liked ? 'rgba(239,68,68,0.5)' : 'rgb(var(--dp-border))',
+            background: liked ? 'rgba(239,68,68,0.08)' : 'transparent',
+          }}
+        >
+          <Heart size={18} className={liked ? 'fill-red-500 text-red-500' : 'text-dp-muted'} />
+        </button>
+
+        <button
+          onClick={handleAdd}
+          className={`flex-1 h-12 rounded-full flex items-center justify-center gap-2.5 font-body text-sm font-semibold tracking-[0.15em] uppercase transition-all ${
+            added ? 'bg-green-500 text-white' : 'bg-dp-cream text-dp-bg'
+          }`}
+        >
+          {added ? <Check size={16} /> : <ShoppingBag size={16} />}
+          {added ? 'Added to Bag!' : 'Add to Bag'}
+        </button>
       </div>
     </main>
   )
 }
 
-function NoteRow({ label, value }) {
+function RelatedCard({ product }) {
+  const cat = categories.find(c => c.slug === product.category)
   return (
-    <div className="flex items-start gap-3">
-      <span className="font-body text-[10px] text-dp-muted uppercase tracking-widest w-8 shrink-0 mt-0.5">{label}</span>
-      <span className="font-body text-xs text-dp-muted/80 leading-relaxed">{value}</span>
-    </div>
+    <Link
+      to={`/product/${product.id}`}
+      className="shrink-0 w-32 bg-dp-card border border-dp-border rounded-2xl overflow-hidden block active:scale-95 transition-transform"
+    >
+      <div
+        className="h-28 flex items-center justify-center relative overflow-hidden"
+        style={{ background: `linear-gradient(145deg, ${product.placeholderColor}44, ${product.placeholderColor}18)` }}
+      >
+        {product.image
+          ? <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+          : <span className="font-display font-bold text-3xl select-none" style={{ color: `${product.placeholderColor}55` }}>{product.placeholderInitial}</span>}
+      </div>
+      <div className="p-2.5">
+        <p className="font-display text-dp-cream text-xs leading-snug truncate">{product.name}</p>
+        <p className="font-body text-[10px] text-dp-gold mt-0.5">{(product.price / 1000).toFixed(0)}k UGX</p>
+      </div>
+    </Link>
   )
 }
