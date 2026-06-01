@@ -1,16 +1,30 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Heart } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
 import LampHero from '../components/LampHero'
 import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
+import { useLikes } from '../context/LikesContext'
 
 export default function Home() {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
-  const { getFeaturedProducts } = useProducts()
-  const featured = getFeaturedProducts()
+  const { products, getFeaturedProducts } = useProducts()
+  const { likedIds } = useLikes()
+
+  const featured = useMemo(() => {
+    if (!likedIds.size) return getFeaturedProducts()
+    const catScore = {}
+    products.filter(p => likedIds.has(p.id)).forEach(p => {
+      catScore[p.category] = (catScore[p.category] || 0) + 1
+    })
+    return products
+      .filter(p => !likedIds.has(p.id))
+      .sort((a, b) => (catScore[b.category] || 0) - (catScore[a.category] || 0))
+      .slice(0, 4)
+  }, [products, likedIds])
 
   function handleSearch(e) {
     e.preventDefault()
@@ -90,7 +104,10 @@ export default function Home() {
       {/* ── NEW ARRIVALS — 2-column grid ── */}
       <section className="px-4 pb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-dp-cream text-lg">New Arrivals</h2>
+          <h2 className="font-display text-dp-cream text-lg flex items-center gap-2">
+              {likedIds.size > 0 ? 'For You' : 'New Arrivals'}
+              {likedIds.size > 0 && <Heart size={13} className="fill-red-400 text-red-400" />}
+            </h2>
           <Link to="/shop" className="font-body text-xs text-dp-gold">See all</Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

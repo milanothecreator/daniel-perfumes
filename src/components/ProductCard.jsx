@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { Heart, Check } from 'lucide-react'
 import { categories } from '../data/products'
 import { useCart } from '../context/CartContext'
+import { useLikes } from '../context/LikesContext'
 
 export default function ProductCard({ product, compact = false }) {
   const cat           = categories.find(c => c.slug === product.category)
   const { addItem, setSheetOpen } = useCart()
-  const [liked, setLiked] = useState(false)
+  const { isLiked, toggleLike } = useLikes()
+  const liked = isLiked(product.id)
   const [added, setAdded] = useState(false)
 
   function handleAdd(e) {
@@ -51,7 +53,7 @@ export default function ProductCard({ product, compact = false }) {
             {/* heart */}
             <button
               type="button"
-              onClick={e => { e.preventDefault(); setLiked(l => !l) }}
+              onClick={e => { e.preventDefault(); toggleLike(product.id) }}
               className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-dp-card/80 backdrop-blur flex items-center justify-center shadow-sm transition-transform active:scale-90"
             >
               <Heart size={13} className={liked ? 'fill-red-500 text-red-500' : 'text-dp-muted'} />
@@ -117,7 +119,7 @@ export default function ProductCard({ product, compact = false }) {
 
           <button
             type="button"
-            onClick={e => { e.preventDefault(); setLiked(l => !l) }}
+            onClick={e => { e.preventDefault(); toggleLike(product.id) }}
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-dp-card/80 backdrop-blur flex items-center justify-center shadow-sm transition-transform active:scale-90"
           >
             <Heart size={15} className={liked ? 'fill-red-500 text-red-500' : 'text-dp-muted'} />

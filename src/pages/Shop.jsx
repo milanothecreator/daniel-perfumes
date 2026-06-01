@@ -7,6 +7,7 @@ import ProductCard from '../components/ProductCard'
 import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
 import { useCart } from '../context/CartContext'
+import { useLikes } from '../context/LikesContext'
 import { useAuth } from '../context/AuthContext'
 import { db, firebaseReady } from '../lib/firebase'
 
@@ -25,7 +26,8 @@ const tabs = [{ slug: 'all', name: 'All', icon: '✦' }, ...categories]
 // ── Horizontal-scroll New Arrivals card ───────────────────────────────────────
 function ArrivalCard({ product }) {
   const cat = categories.find(c => c.slug === product.category)
-  const [liked, setLiked] = useState(false)
+  const { isLiked, toggleLike } = useLikes()
+  const liked = isLiked(product.id)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
 
@@ -55,7 +57,7 @@ function ArrivalCard({ product }) {
         </span>
         <button
           type="button"
-          onClick={e => { e.preventDefault(); setLiked(l => !l) }}
+          onClick={e => { e.preventDefault(); toggleLike(product.id) }}
           className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-dp-card/80 backdrop-blur flex items-center justify-center shadow-sm"
         >
           <Heart size={13} className={liked ? 'fill-red-500 text-red-500' : 'text-dp-muted'} />
@@ -89,6 +91,7 @@ export default function Shop() {
   const tabsRef                   = useRef(null)
   const { user }                  = useAuth()
   const { products }              = useProducts()
+  const { likedIds }              = useLikes()
 
   useEffect(() => {
     if (!firebaseReady || !db) return
@@ -111,7 +114,17 @@ export default function Shop() {
     })
   }, [activeTab, search, products])
 
-  const newArrivals = products.slice(0, 6)
+  const newArrivals = useMemo(() => {
+    if (!likedIds.size) return products.slice(0, 6)
+    const catScore = {}
+    products.filter(p => likedIds.has(p.id)).forEach(p => {
+      catScore[p.category] = (catScore[p.category] || 0) + 1
+    })
+    return products
+      .filter(p => !likedIds.has(p.id))
+      .sort((a, b) => (catScore[b.category] || 0) - (catScore[a.category] || 0))
+      .slice(0, 6)
+  }, [products, likedIds])
 
   return (
     <main className="min-h-screen bg-dp-bg pb-24">
@@ -245,7 +258,10 @@ export default function Shop() {
           className="mb-8"
         >
           <div className="flex items-center justify-between px-4 sm:px-6 mb-4">
-            <h2 className="font-display text-lg text-dp-cream">New Arrivals</h2>
+            <h2 className="font-display text-lg text-dp-cream flex items-center gap-2">
+              {likedIds.size > 0 ? 'For You' : 'New Arrivals'}
+              {likedIds.size > 0 && <Heart size={13} className="fill-red-400 text-red-400" />}
+            </h2>
             <Link to="/shop" onClick={() => setActiveTab('all')} className="flex items-center gap-0.5 font-body text-xs text-dp-gold hover:text-dp-gold-light transition-colors">
               See all <ChevronRight size={13} />
             </Link>
