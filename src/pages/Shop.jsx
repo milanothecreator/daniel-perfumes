@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Search, X, Heart, ChevronRight, Check } from 'lucide-react'
 import { doc, onSnapshot } from 'firebase/firestore'
 import ProductCard from '../components/ProductCard'
+import { ProductCardSkeleton, ArrivalCardSkeleton } from '../components/SkeletonCard'
 import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
 import { useCart } from '../context/CartContext'
@@ -91,7 +92,7 @@ export default function Shop() {
   const [banner, setBanner]       = useState(BANNER_DEFAULT)
   const tabsRef                   = useRef(null)
   const { user }                  = useAuth()
-  const { products }              = useProducts()
+  const { products, loading }     = useProducts()
   const { likedIds }              = useLikes()
   const { prefs }                 = usePrivacy()
 
@@ -272,11 +273,14 @@ export default function Shop() {
             className="flex gap-3.5 px-4 sm:px-6 overflow-x-auto pb-2"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {newArrivals.map((product, i) => (
-              <motion.div key={product.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * i }}>
-                <ArrivalCard product={product} />
-              </motion.div>
-            ))}
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => <ArrivalCardSkeleton key={i} />)
+              : newArrivals.map((product, i) => (
+                <motion.div key={product.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * i }}>
+                  <ArrivalCard product={product} />
+                </motion.div>
+              ))
+            }
           </div>
         </motion.section>
       )}
@@ -310,7 +314,11 @@ export default function Shop() {
           </div>
         )}
 
-        {filtered.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 gap-3.5">
+            {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+          </div>
+        ) : filtered.length > 0 ? (
           <div className="grid grid-cols-2 gap-3.5">
             {filtered.map((product, i) => (
               <motion.div

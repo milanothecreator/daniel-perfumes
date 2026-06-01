@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
+import { ProductCardSkeleton } from '../components/SkeletonCard'
 import LampHero from '../components/LampHero'
 import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
@@ -12,7 +13,7 @@ import { usePrivacy } from '../context/PrivacyContext'
 export default function Home() {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
-  const { products, getFeaturedProducts } = useProducts()
+  const { products, loading, getFeaturedProducts } = useProducts()
   const { likedIds } = useLikes()
   const { prefs } = usePrivacy()
 
@@ -113,16 +114,19 @@ export default function Home() {
           <Link to="/shop" className="font-body text-xs text-dp-gold">See all</Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {featured.map((product, i) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-            >
-              <ProductCard product={product} compact />
-            </motion.div>
-          ))}
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            : featured.map((product, i) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+              >
+                <ProductCard product={product} compact />
+              </motion.div>
+            ))
+          }
         </div>
       </section>
 

@@ -11,12 +11,14 @@ export function ProductsProvider({ children }) {
   // Seed instantly with the static array so pages never flash empty,
   // then replace with live Firestore data once it arrives.
   const [products, setProducts] = useState(seedProducts)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!firebaseReady || !db) return
     const unsub = onSnapshot(
       collection(db, 'products'),
       snap => {
+        setLoading(false)
         if (snap.empty) return // keep seed data if collection not yet populated
         const staticMap = Object.fromEntries(seedProducts.map(p => [p.id, p]))
         // If Firestore has a broken image URL (old short-ID format), fall back to
@@ -45,7 +47,7 @@ export function ProductsProvider({ children }) {
 
   return (
     <ProductsContext.Provider
-      value={{ products, getProductById, getProductsByCategory, getFeaturedProducts }}
+      value={{ products, loading, getProductById, getProductsByCategory, getFeaturedProducts }}
     >
       {children}
     </ProductsContext.Provider>

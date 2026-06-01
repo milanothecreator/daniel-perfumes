@@ -1,13 +1,14 @@
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ProductCard from '../components/ProductCard'
+import { ProductCardSkeleton } from '../components/SkeletonCard'
 import { categories } from '../data/products'
 import { useProducts } from '../context/ProductsContext'
 
 export default function Category() {
   const { slug } = useParams()
   const category = categories.find(c => c.slug === slug)
-  const { getProductsByCategory } = useProducts()
+  const { loading, getProductsByCategory } = useProducts()
 
   if (!category) return <Navigate to="/shop" replace />
 
@@ -59,9 +60,12 @@ export default function Category() {
 
         {/* Products */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} compact />
-          ))}
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            : products.map(product => (
+              <ProductCard key={product.id} product={product} compact />
+            ))
+          }
         </div>
 
         {/* Other categories */}
