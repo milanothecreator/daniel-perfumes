@@ -144,18 +144,22 @@ export default function Home() {
             backdropFilter: 'blur(24px)',
           }}
         >
-          {/* aurora blob zone — top portion */}
-          <div className="absolute top-0 left-0 right-0 h-[170px] pointer-events-none overflow-hidden" style={{ borderRadius: '24px 24px 0 0' }}>
-            <div style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', background: 'rgba(40,100,255,0.55)', filter: 'blur(45px)', top: -60, left: -30 }} />
-            <div style={{ position: 'absolute', width: 170, height: 170, borderRadius: '50%', background: 'rgba(80,160,255,0.4)', filter: 'blur(50px)', top: -40, right: -10 }} />
-            <div style={{ position: 'absolute', width: 130, height: 130, borderRadius: '50%', background: 'rgba(30,70,200,0.35)', filter: 'blur(38px)', top: 20, left: '30%' }} />
-            {/* glassy sheen highlight */}
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 50%)' }} />
-          </div>
+          {/* aurora blobs — breathing motion, clipped by the card's own rounded corners */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            animate={{ scale: [1, 1.07, 1], opacity: [0.85, 1, 0.85] }}
+            transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <div style={{ position: 'absolute', width: 220, height: 220, borderRadius: '50%', background: 'rgba(56,120,255,0.6)', filter: 'blur(48px)', top: -70, left: -40 }} />
+            <div style={{ position: 'absolute', width: 190, height: 190, borderRadius: '50%', background: 'rgba(96,170,255,0.45)', filter: 'blur(52px)', top: -50, right: -20 }} />
+            <div style={{ position: 'absolute', width: 150, height: 150, borderRadius: '50%', background: 'rgba(40,90,220,0.4)', filter: 'blur(40px)', top: 10, left: '32%' }} />
+          </motion.div>
+          {/* glassy sheen highlight — static */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(150deg, rgba(255,255,255,0.10) 0%, transparent 38%)' }} />
           {/* fade-to-dark transition */}
           <div
-            className="absolute top-[110px] left-0 right-0 h-[90px] pointer-events-none"
-            style={{ background: 'linear-gradient(to bottom, transparent, rgba(6,12,28,0.95))' }}
+            className="absolute top-[100px] left-0 right-0 h-[110px] pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent, rgba(6,12,28,0.96))' }}
           />
 
           {/* content */}
@@ -183,21 +187,17 @@ export default function Home() {
             {/* tags row */}
             <div className="flex items-center gap-2 mb-3">
               <span className="font-body text-[9px] tracking-[0.35em] uppercase px-2.5 py-1 rounded-full"
-                style={{ background: 'rgba(60,120,255,0.15)', color: '#90C0FF', border: '1px solid rgba(80,140,255,0.3)', backdropFilter: 'blur(8px)' }}>
-                Personalised
-              </span>
-              <span className="font-body text-[9px] tracking-[0.35em] uppercase px-2.5 py-1 rounded-full"
-                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}>
-                Free · 1 min
+                style={{ background: 'rgba(60,120,255,0.2)', color: '#BBD6FF', border: '1px solid rgba(110,170,255,0.4)', backdropFilter: 'blur(8px)' }}>
+                Personalised · 1 min
               </span>
             </div>
 
-            <h2 className="font-display text-[1.6rem] text-dp-cream leading-snug mb-2">
+            <h2 className="font-display text-[1.6rem] leading-snug mb-2" style={{ color: '#F2F6FF', textShadow: '0 1px 12px rgba(0,10,40,0.5)' }}>
               Find your<br />
-              <span className="italic" style={{ color: '#7EB8FF' }}>signature scent</span>
+              <span className="italic" style={{ color: '#9CC6FF' }}>signature scent</span>
             </h2>
 
-            <p className="font-body text-dp-muted text-[11px] leading-relaxed mb-6 max-w-[220px]">
+            <p className="font-body text-[11px] leading-relaxed mb-6 max-w-[220px]" style={{ color: 'rgba(214,226,247,0.78)' }}>
               Answer 6 quick questions and our AI matches you to the perfect fragrance.
             </p>
 
