@@ -59,14 +59,14 @@ export default function AdminUsers() {
         Note: “Remove” disables app access. The login itself is fully deleted from the Firebase console.
       </p>
 
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {filtered.map(u => {
           const isMe = me?.id === u.uid
           const isAdmin = u.role === 'admin'
           return (
             <div
               key={u.uid}
-              className="rounded-2xl p-4 flex items-center gap-3 flex-wrap"
+              className="rounded-2xl p-4 flex items-center gap-3 flex-wrap lg:flex-nowrap"
               style={{ background: C.card, border: `1px solid ${C.border}`, opacity: u.disabled ? 0.55 : 1 }}
             >
               <div className="relative shrink-0">
