@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   ChevronRight, ShoppingBag, Sparkles, Star, Heart, LogOut,
   Mail, MapPin, Moon, Sun, User, Shield, RefreshCw,
-  MessageSquare, Bell, Sliders, ChevronDown, Check, X, Edit3, ShoppingCart,
+  Eye, ChevronDown, Check, X, Edit3, ShoppingCart,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -72,28 +72,28 @@ function PrivacyPanel({ onClose }) {
 
   const items = [
     {
-      key: 'whatsappMarketing',
-      icon: MessageSquare,
-      label: 'WhatsApp Promotions',
-      desc: 'Receive new arrivals, offers and restocks via WhatsApp.',
-    },
-    {
-      key: 'orderNotifications',
-      icon: Bell,
-      label: 'Order Updates',
-      desc: 'Get WhatsApp messages when your order is confirmed or ready.',
-    },
-    {
       key: 'scentRecommendations',
       icon: Sparkles,
       label: 'Personalised Recommendations',
       desc: 'Use your quiz answers to suggest fragrances you\'ll love.',
     },
     {
-      key: 'dataCollection',
-      icon: Sliders,
-      label: 'Usage Analytics',
-      desc: 'Help us improve the app by sharing anonymous browsing data.',
+      key: 'showSavedItems',
+      icon: Heart,
+      label: 'Show Saved Items',
+      desc: 'Display your saved fragrances on your profile.',
+    },
+    {
+      key: 'showLocation',
+      icon: MapPin,
+      label: 'Show Location',
+      desc: 'Display your city on your profile.',
+    },
+    {
+      key: 'showOnlineStatus',
+      icon: Eye,
+      label: 'Online Status',
+      desc: 'Show the green dot when you\'re active.',
     },
   ]
 
@@ -198,6 +198,7 @@ function LocationRow({ user }) {
 export default function Profile() {
   const { user, isAdmin, signOut } = useAuth()
   const { dark, toggle }           = useTheme()
+  const { prefs }                  = usePrivacy()
   const navigate                   = useNavigate()
   const [privacyOpen, setPrivacyOpen]   = useState(false)
   const [showAllSaved, setShowAllSaved] = useState(false)
@@ -232,7 +233,9 @@ export default function Profile() {
             >
               <span className="font-display text-xl text-dp-gold">{user.initials}</span>
             </div>
-            <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-dp-bg" />
+            {prefs.showOnlineStatus && (
+              <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-dp-bg" />
+            )}
           </div>
 
           <div className="flex-1 min-w-0">
@@ -309,6 +312,7 @@ export default function Profile() {
         </motion.div>
 
         {/* ── Saved Items ── */}
+        {prefs.showSavedItems && (
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -347,6 +351,7 @@ export default function Profile() {
             </>
           )}
         </motion.section>
+        )}
 
         {/* ── Loyalty banner ── */}
         <motion.div
@@ -427,8 +432,8 @@ export default function Profile() {
               <span className="font-body text-xs text-dp-muted truncate max-w-[160px]">{user.email}</span>
             </div>
 
-            {/* Location — editable, no default */}
-            <LocationRow user={user} />
+            {/* Location — editable, hidden when showLocation is off */}
+            {prefs.showLocation && <LocationRow user={user} />}
 
             {/* Sign-in method */}
             <div className="w-full flex items-center gap-3 px-4 py-3.5">

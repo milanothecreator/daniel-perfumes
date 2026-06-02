@@ -3,10 +3,10 @@ import { createContext, useContext, useState } from 'react'
 const PrivacyContext = createContext(null)
 
 const defaultPrivacy = {
-  whatsappMarketing: true,
-  orderNotifications: true,
   scentRecommendations: true,
-  dataCollection: false,
+  showSavedItems: true,
+  showLocation: true,
+  showOnlineStatus: true,
 }
 
 function loadPrivacy() {
