@@ -28,6 +28,12 @@ export default function AdminUsers() {
 
   const update = (uid, data) => updateDoc(doc(db, 'users', uid), data)
 
+  function isOnline(u) {
+    if (u.onlineVisible === false) return false
+    if (!u.lastSeen?.toDate) return false
+    return (Date.now() - u.lastSeen.toDate().getTime()) < 5 * 60 * 1000
+  }
+
   function saveName(uid) {
     if (nameDraft.trim()) update(uid, { name: nameDraft.trim() })
     setEditing(null)
@@ -63,9 +69,15 @@ export default function AdminUsers() {
               className="rounded-2xl p-4 flex items-center gap-3 flex-wrap"
               style={{ background: C.card, border: `1px solid ${C.border}`, opacity: u.disabled ? 0.55 : 1 }}
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
-                style={{ background: `${C.orange}22`, color: C.orangeLight }}>
-                {(u.name || u.email || '?').slice(0, 1).toUpperCase()}
+              <div className="relative shrink-0">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold"
+                  style={{ background: `${C.orange}22`, color: C.orangeLight }}>
+                  {(u.name || u.email || '?').slice(0, 1).toUpperCase()}
+                </div>
+                {isOnline(u) && (
+                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2"
+                    style={{ borderColor: C.card }} />
+                )}
               </div>
 
               <div className="flex-1 min-w-0">

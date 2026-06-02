@@ -7,6 +7,8 @@ import {
   Mail, MapPin, Moon, Sun, User, Shield, RefreshCw,
   Eye, ChevronDown, Check, X, Edit3, ShoppingCart,
 } from 'lucide-react'
+import { doc, updateDoc } from 'firebase/firestore'
+import { db } from '../lib/firebase'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { useLikes } from '../context/LikesContext'
@@ -69,6 +71,14 @@ function SavedCard({ product }) {
 
 function PrivacyPanel({ onClose }) {
   const { prefs, toggle } = usePrivacy()
+  const { user } = useAuth()
+
+  function handleToggle(key) {
+    toggle(key)
+    if (key === 'showOnlineStatus' && user) {
+      updateDoc(doc(db, 'users', user.id), { onlineVisible: !prefs[key] }).catch(() => {})
+    }
+  }
 
   const items = [
     {
@@ -114,7 +124,7 @@ function PrivacyPanel({ onClose }) {
             <p className="font-body text-[11px] text-dp-muted mt-0.5 leading-relaxed">{desc}</p>
           </div>
           <button
-            onClick={() => toggle(key)}
+            onClick={() => handleToggle(key)}
             className={`shrink-0 mt-1 w-11 h-6 rounded-full transition-colors duration-200 relative ${prefs[key] ? 'bg-dp-gold' : 'bg-dp-border'}`}
           >
             <span

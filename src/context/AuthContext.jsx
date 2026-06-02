@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
   updateProfile,
 } from 'firebase/auth'
-import { doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
+import { doc, setDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { auth, db, firebaseReady } from '../lib/firebase'
 
 const AuthContext = createContext(null)
@@ -41,9 +41,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!firebaseReady) return
     let unsubProfile = null
+    let heartbeat = null
 
     const unsubAuth = onAuthStateChanged(auth, fb => {
       if (unsubProfile) { unsubProfile(); unsubProfile = null }
+      if (heartbeat) { clearInterval(heartbeat); heartbeat = null }
 
       if (!fb) {
         setUser(null); setRole('customer'); setLoading(false)
@@ -62,12 +64,19 @@ export function AuthProvider({ children }) {
               await fbSignOut(auth); return
             }
             setRole(data.role || 'customer')
+            // Set up lastSeen heartbeat once per session.
+            if (!heartbeat) {
+              const ping = () => updateDoc(ref, { lastSeen: serverTimestamp() }).catch(() => {})
+              ping()
+              heartbeat = setInterval(ping, 2 * 60 * 1000)
+            }
           } else {
             // First sign-in — create the profile doc.
             try {
               await setDoc(ref, {
                 name: u.name, email: u.email, provider: u.provider,
                 role: 'customer', disabled: false, createdAt: serverTimestamp(),
+                lastSeen: serverTimestamp(), onlineVisible: true,
               })
             } catch {}
             setRole('customer')
@@ -81,7 +90,7 @@ export function AuthProvider({ children }) {
       )
     })
 
-    return () => { unsubAuth(); if (unsubProfile) unsubProfile() }
+    return () => { unsubAuth(); if (unsubProfile) unsubProfile(); if (heartbeat) clearInterval(heartbeat) }
   }, [])
 
   // ── Sign up: create account → immediately signed in, no verification step ──
