@@ -228,7 +228,7 @@ export default function Profile() {
 
   return (
     <main className="min-h-screen pb-28">
-      <div className="pt-20 max-w-lg mx-auto px-4">
+      <div className="pt-20 max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* ── Avatar + name row ── */}
         <motion.div
@@ -345,7 +345,7 @@ export default function Profile() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {visibleSaved.map(product => (
                   <SavedCard key={product.id} product={product} />
                 ))}

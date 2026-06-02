@@ -38,7 +38,7 @@ export default function Home() {
     <main className="min-h-screen pt-16 pb-24 md:pb-0">
 
       {/* ── SEARCH BAR ── */}
-      <section className="px-4 pt-5 pb-3">
+      <section className="px-4 sm:px-6 pt-5 pb-3 max-w-7xl mx-auto">
         <form onSubmit={handleSearch} className="relative flex items-center">
           <svg className="absolute left-3.5 w-4 h-4 text-dp-muted pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
@@ -67,13 +67,13 @@ export default function Home() {
       <LampHero />
 
       {/* ── CATEGORIES — horizontal pill cards ── */}
-      <section className="pb-5">
-        <div className="flex items-center justify-between px-4 mb-3">
+      <section className="pb-5 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between px-4 sm:px-6 mb-3">
           <h2 className="font-display text-dp-cream text-lg">Categories</h2>
           <Link to="/shop" className="font-body text-xs text-dp-gold">See all</Link>
         </div>
         <div
-          className="flex gap-3 px-4 pb-1 overflow-x-auto"
+          className="flex gap-3 px-4 sm:px-6 pb-1 overflow-x-auto"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {categories.map((cat, i) => (
@@ -105,7 +105,7 @@ export default function Home() {
       </section>
 
       {/* ── NEW ARRIVALS — 2-column grid ── */}
-      <section className="px-4 pb-6">
+      <section className="px-4 sm:px-6 pb-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-dp-cream text-lg flex items-center gap-2">
               {likedIds.size > 0 && prefs.scentRecommendations ? 'For You' : 'New Arrivals'}
@@ -131,7 +131,7 @@ export default function Home() {
       </section>
 
       {/* ── QUIZ CTA ── */}
-      <section className="px-4 pb-6">
+      <section className="px-4 sm:px-6 pb-6 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

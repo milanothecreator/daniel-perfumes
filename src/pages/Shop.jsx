@@ -133,7 +133,7 @@ export default function Shop() {
     <main className="min-h-screen bg-dp-bg pb-24">
 
       {/* ── Top greeting + search ── */}
-      <div className="pt-20 pb-4 px-4 sm:px-6 max-w-2xl mx-auto">
+      <div className="pt-20 pb-4 px-4 sm:px-6 max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-5">
           {user ? (
             <>
@@ -168,11 +168,12 @@ export default function Shop() {
 
       {/* ── Featured banner ── */}
       {banner.active && (
+        <div className="px-4 sm:px-6 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="mx-4 sm:mx-6 max-w-2xl sm:mx-auto mb-6 rounded-2xl overflow-hidden relative"
+          className="mb-6 rounded-2xl overflow-hidden relative"
           style={!banner.videoUrl ? { background: 'linear-gradient(120deg, #1A1510 0%, #3A2A10 60%, #9A7520 100%)' } : {}}
         >
           {/* Video background */}
@@ -219,15 +220,16 @@ export default function Shop() {
             </div>
           )}
         </motion.div>
+        </div>
       )}
 
-      {/* ── Category pills ── */}
+      {/* ── Category pills — mobile/tablet only ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         ref={tabsRef}
-        className="flex gap-2.5 px-4 sm:px-6 mb-6 overflow-x-auto pb-1"
+        className="flex gap-2.5 px-4 sm:px-6 mb-6 overflow-x-auto pb-1 lg:hidden"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {tabs.map(tab => (
@@ -252,8 +254,31 @@ export default function Shop() {
         ))}
       </motion.div>
 
-      {/* ── New Arrivals horizontal scroll (only when not searching/filtering) ── */}
-      {activeTab === 'all' && !search && (
+      {/* ── Desktop sidebar + main content ── */}
+      <div className="max-w-7xl mx-auto lg:flex lg:gap-8">
+
+        {/* Sidebar — desktop only */}
+        <aside className="hidden lg:block w-48 shrink-0 pl-6 pt-1">
+          <p className="font-body text-[10px] text-dp-muted uppercase tracking-widest mb-3">Categories</p>
+          {tabs.map(tab => (
+            <button
+              key={tab.slug}
+              onClick={() => setActiveTab(tab.slug)}
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left font-body text-sm transition-all mb-0.5 ${
+                activeTab === tab.slug ? 'bg-dp-gold/15 text-dp-gold' : 'text-dp-muted hover:text-dp-cream hover:bg-dp-card'
+              }`}
+            >
+              {tab.icon && <span className="text-base leading-none">{tab.icon}</span>}
+              {tab.name}
+            </button>
+          ))}
+        </aside>
+
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+
+        {/* ── New Arrivals horizontal scroll (only when not searching/filtering) ── */}
+        {activeTab === 'all' && !search && (
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -285,8 +310,8 @@ export default function Shop() {
         </motion.section>
       )}
 
-      {/* ── All products grid ── */}
-      <section className="px-4 sm:px-6 max-w-2xl sm:mx-auto">
+        {/* ── All products grid ── */}
+        <section className="px-4 sm:px-6">
         {activeTab !== 'all' ? (() => {
           const cat = tabs.find(t => t.slug === activeTab)
           return (
@@ -315,11 +340,11 @@ export default function Shop() {
         )}
 
         {loading ? (
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
             {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
           </div>
         ) : filtered.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
             {filtered.map((product, i) => (
               <motion.div
                 key={product.id}
@@ -337,7 +362,9 @@ export default function Shop() {
             <p className="font-body text-dp-muted text-sm">No fragrances found. Try a different search.</p>
           </div>
         )}
-      </section>
+        </section>
+        </div>{/* end main content */}
+      </div>{/* end sidebar layout */}
     </main>
   )
 }

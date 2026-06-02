@@ -12,7 +12,7 @@ const values = [
 export default function About() {
   return (
     <main className="min-h-screen pt-24 pb-20">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Hero */}
         <motion.div
@@ -78,7 +78,7 @@ export default function About() {
             <h2 className="section-title">Our Values</h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {values.map((v, i) => (
               <motion.div
                 key={v.title}

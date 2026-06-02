@@ -50,11 +50,14 @@ export default function Product() {
   }
 
   return (
-    <main className="min-h-screen bg-dp-bg pt-16 pb-32">
+    <main className="min-h-screen bg-dp-bg pt-16 pb-32 md:pb-20">
 
-      {/* ── Full-width hero image carousel ── */}
+      <div className="md:max-w-7xl md:mx-auto md:px-8 lg:px-12 md:pt-8">
+      <div className="md:grid md:grid-cols-2 md:gap-12 md:items-start">
+
+      {/* ── Hero image (full-width mobile / left col desktop) ── */}
       <div
-        className="relative h-64 sm:h-80 w-full overflow-hidden"
+        className="relative h-64 sm:h-80 md:h-auto md:aspect-[4/5] md:rounded-3xl md:sticky md:top-24 w-full overflow-hidden"
         style={{ background: product.placeholderColor + '33' }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
@@ -104,8 +107,8 @@ export default function Product() {
         </button>
       </div>
 
-      {/* ── Content ── */}
-      <div className="px-4 sm:px-6 max-w-lg mx-auto">
+      {/* ── Content (right col on desktop) ── */}
+      <div className="px-4 sm:px-6 md:px-0 max-w-lg mx-auto md:max-w-none md:py-2">
 
         {/* Category + name + notes summary */}
         <div className="mt-1 mb-4">
@@ -203,12 +206,13 @@ export default function Product() {
           </div>
         )}
       </div>
+      </div>{/* end grid */}
+      </div>{/* end max-w wrapper */}
 
       {/* ── Fixed bottom bar ── */}
       <div
-        className="fixed left-0 right-0 z-40 px-4 flex items-center gap-3"
+        className="fixed left-0 right-0 bottom-[66px] md:bottom-0 z-40 px-4 md:px-8 flex items-center gap-3"
         style={{
-          bottom: 'calc(66px)',
           paddingTop: '10px',
           paddingBottom: '10px',
           background: 'rgb(var(--dp-bg) / 0.92)',
