@@ -4,6 +4,19 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
+## 0. Check for a Relevant Skill First
+
+**Before starting any task, scan the available skills and use any that fit.**
+
+At the start of every task, check the skills listed in the environment (global/plugin skills) and invoke the relevant one before doing the work manually. Common matches for this project:
+- **frontend-design** — building or restyling UI components, pages, or visual effects.
+- **cloudinary-docs / cloudinary-transformations** — anything touching image/video uploads, optimization, or transformation URLs.
+- **verify / run** — confirming a change actually works in the running app.
+- **code-review / simplify** — reviewing or cleaning up a diff.
+- **theme-factory** — applying a cohesive color/font theme.
+
+If a skill matches, use it. If none fit, proceed normally. Don't announce the absence of a skill — just check silently and act.
+
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**

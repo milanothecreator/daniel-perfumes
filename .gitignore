@@ -32,3 +32,5 @@ temporary screenshots/
 
 # Claude local config
 .claude/settings.local.json
+
+.vercel
